@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>readme</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="README_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="README_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="README_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="README_files/libs/quarto-html/popper.min.js"></script>
+<script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="README_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="sachsfield" class="level1">
+<h1>sachsfield</h1>
+<p>A Python package for evolving coupled scalar field systems arising from the Sachs optical equations in gravitational lensing.</p>
+<section id="physics-overview" class="level2">
+<h2 class="anchored" data-anchor-id="physics-overview">Physics Overview</h2>
+<section id="the-dynamical-system" class="level3">
+<h3 class="anchored" data-anchor-id="the-dynamical-system">The dynamical system</h3>
+<p>Four real scalar fields <code>x_a(n, lambda)</code> (a = 1,2,3,4) evolve along an affine parameter <code>lambda</code> on directions <code>n</code> on the sky:</p>
+<pre><code>x_dot_a = F_{abc} x_b x_c + s_a</code></pre>
+<p>where dot denotes <code>d/d_lambda</code>, repeated Latin indices are summed over {1,2,3,4}, and <code>s_a</code> is the source (driving) term with <code>s_4 = 0</code> always.</p>
+</section>
+<section id="coupling-tensor-f" class="level3">
+<h3 class="anchored" data-anchor-id="coupling-tensor-f">Coupling tensor F</h3>
+<p>The nonzero entries of <code>F_{abc}</code> are:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>abc</th>
+<th>111</th>
+<th>122</th>
+<th>133</th>
+<th>144</th>
+<th>212</th>
+<th>313</th>
+<th>414</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F</td>
+<td>-1/2</td>
+<td>-2</td>
+<td>-2</td>
+<td>2</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="saddle-point-fluctuation-decomposition" class="level3">
+<h3 class="anchored" data-anchor-id="saddle-point-fluctuation-decomposition">Saddle-point + fluctuation decomposition</h3>
+<p>The system is decomposed as <code>x_a = chi_a + xi_a</code>:</p>
+<p><strong>Saddle point</strong> <code>chi_a(lambda)</code> (direction-independent):</p>
+<pre><code>chi_dot_a = F_{abc} chi_b chi_c + sbar_a(lambda)</code></pre>
+<p>where <code>sbar_a</code> is the sky-averaged source. Initial conditions: <code>chi_1 -&gt; y1_init / lambda</code> as <code>lambda -&gt; 0^-</code>, <code>chi_{2,3,4} = 0</code>.</p>
+<blockquote class="blockquote">
+<p><strong>Note on the asymptotic:</strong> With <code>F_111 = -1/2</code>, the self-consistent asymptotic solution of the homogeneous equation <code>chi_dot = -1/2 chi^2</code> is <code>chi_1 = 2/lambda</code> (i.e., <code>y1_init = 2</code>). Verify: <code>d/dlam(2/lam) = -2/lam^2</code> and <code>-1/2 * (2/lam)^2 = -2/lam^2</code>. The parameter <code>y1_init</code> is adjustable if a different F convention is used.</p>
+</blockquote>
+<p><strong>Fluctuations</strong> <code>xi_a(lambda, n)</code> (direction-dependent):</p>
+<pre><code>xi_dot_a = M_{ab}(lambda) xi_b + F_{abc} xi_b xi_c + delta_s_a(lambda, n)</code></pre>
+<p>where <code>M_{ab} = (F_{abc} + F_{acb}) chi_c</code> is the linearization matrix and <code>delta_s_a = s_a - sbar_a</code>. Initial condition: <code>xi_a = 0</code>.</p>
+<p>The linearization matrix has the explicit form:</p>
+<pre><code>        [ -c1   -4c2  -4c3   4c4 ]
+M(chi)= [ -c2   -c1    0      0  ]     (4-field)
+        [ -c3    0    -c1     0  ]
+        [ -c4    0     0     -c1 ]</code></pre>
+</section>
+<section id="the-4th-field" class="level3">
+<h3 class="anchored" data-anchor-id="the-4th-field">The 4th field</h3>
+<p>Since <code>s_4 = 0</code>, <code>chi_4(0) = 0</code>, and the fluctuation equation gives <code>xi_dot_4 = -(chi_1 + xi_1) xi_4</code>, the 4th field is identically zero. The package supports <code>n_fields=3</code> to drop it entirely (25% fewer ODE equations).</p>
+</section>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/src-field</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dependencies: <code>numpy</code>, <code>scipy</code>, <code>healpy</code>.</p>
+</section>
+<section id="package-structure" class="level2">
+<h2 class="anchored" data-anchor-id="package-structure">Package Structure</h2>
+<pre><code>sachsfield/
+  __init__.py          # Public API exports
+  coefficients.py      # F tensor, M matrix, quadratic nonlinearity
+  saddle.py            # Saddle-point ODE solver (rescaled variables)
+  sources.py           # Source field generation (full-sky + flat-sky)
+  fluctuations.py      # Fluctuation ODE solver on pixel arrays
+  solver.py            # High-level orchestrator</code></pre>
+</section>
+<section id="module-reference" class="level2">
+<h2 class="anchored" data-anchor-id="module-reference">Module Reference</h2>
+<section id="coefficients.py" class="level3">
+<h3 class="anchored" data-anchor-id="coefficients.py"><code>coefficients.py</code></h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>quadratic(x, n_fields<span class="op">=</span><span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Compute <code>F_{abc} x_b x_c</code> for all <code>a</code>. Input <code>x</code> has shape <code>(n_fields,)</code> or <code>(n_fields, npix)</code>. Fully vectorized over pixels.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>M_matrix(chi, n_fields<span class="op">=</span><span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Return the <code>(n_fields, n_fields)</code> linearization matrix <code>M_{ab} = (F_{abc} + F_{acb}) chi_c</code>.</p>
+</section>
+<section id="saddle.py" class="level3">
+<h3 class="anchored" data-anchor-id="saddle.py"><code>saddle.py</code></h3>
+<section id="saddlepointsolver" class="level4">
+<h4 class="anchored" data-anchor-id="saddlepointsolver"><code>SaddlePointSolver</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> SaddlePointSolver(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    sbar_func,          <span class="co"># callable(lam) -&gt; ndarray(n_fields,)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    lam_span,           <span class="co"># (lam_start, lam_end), both negative, lam_end more negative</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,         <span class="co"># 3 or 4</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    y1_init<span class="op">=</span><span class="fl">2.0</span>,        <span class="co"># rescaled IC: y1 = lam * chi_1 at lam_start</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'Radau'</span>,     <span class="co"># scipy solve_ivp method</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    dense_output<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-10</span>,  <span class="co"># passed to solve_ivp</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Rescaled variable trick:</strong> Internally integrates <code>y_1 = lambda * chi_1</code> instead of <code>chi_1</code> directly. This keeps the state vector O(1) near the singular point <code>lambda -&gt; 0</code>, avoiding numerical stiffness. The rescaled ODE is:</p>
+<pre><code>dy_1/dlam = y_1(2 - y_1) / (2 lam) + lam * (F_{1bc&gt;1} chi_b chi_c + sbar_1)
+dy_a/dlam = -y_1 y_a / lam + sbar_a     (a &gt;= 2)</code></pre>
+<p>with IC <code>y_1 = y1_init</code>, <code>y_{rest} = 0</code>. The fixed point <code>y_1 = 2</code> (for <code>F_111 = -1/2</code>) is a stable equilibrium of the rescaled equation, so integration is well-conditioned.</p>
+</section>
+<section id="saddlepointresult" class="level4">
+<h4 class="anchored" data-anchor-id="saddlepointresult"><code>SaddlePointResult</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>result.lam              <span class="co"># ndarray, shape (N,)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>result.chi              <span class="co"># ndarray, shape (n_fields, N) -- in original chi coords</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>result(lam)             <span class="co"># interpolate chi at arbitrary lambda (dense output)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>result.M(lam)           <span class="co"># linearization matrix at given lambda</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="sources.py" class="level3">
+<h3 class="anchored" data-anchor-id="sources.py"><code>sources.py</code></h3>
+<p>Two backends with identical interface, differing only in sky geometry.</p>
+<section id="fullskysource-healpy-spherical-harmonics" class="level4">
+<h4 class="anchored" data-anchor-id="fullskysource-healpy-spherical-harmonics"><code>FullSkySource</code> (healpy spherical harmonics)</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>source <span class="op">=</span> FullSkySource(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    cl_func,            <span class="co"># callable(lam) -&gt; (cl_11, cl_22, cl_33), arrays indexed by ell</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    lam_samples,        <span class="co"># 1D array of lambda values for source generation</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    nside,              <span class="co"># healpy nside</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    corr_func<span class="op">=</span><span class="va">None</span>,     <span class="co"># callable(|dlam|) -&gt; rho in [0,1], or None for uncorrelated</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>source.generate()       <span class="co"># pre-generate all maps (call explicitly or auto on first use)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="flatskysource-2d-fft-rectangular-patch" class="level4">
+<h4 class="anchored" data-anchor-id="flatskysource-2d-fft-rectangular-patch"><code>FlatSkySource</code> (2D FFT rectangular patch)</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>source <span class="op">=</span> FlatSkySource(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    cl_func,            <span class="co"># same as FullSkySource</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    lam_samples,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    nx, ny,             <span class="co"># grid dimensions</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    dx,                 <span class="co"># pixel angular size in radians</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    corr_func<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>source.generate()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="source-generation-algorithm" class="level4">
+<h4 class="anchored" data-anchor-id="source-generation-algorithm">Source generation algorithm</h4>
+<p>For each source field <code>a in {1,2,3}</code> and each harmonic mode <code>(ell, m)</code> (or Fourier mode <code>k</code>):</p>
+<ol type="1">
+<li><p>Build the <code>(n_lam, n_lam)</code> covariance matrix:</p>
+<pre><code>K[i,j] = sqrt(C_ell(lam_i)) * sqrt(C_ell(lam_j)) * rho(|lam_i - lam_j|)</code></pre></li>
+<li><p>Cholesky decompose <code>K = L L^T</code>.</p></li>
+<li><p>Draw iid Gaussians <code>z ~ N(0,1)</code> and compute correlated coefficients <code>a_lm = L z</code>.</p></li>
+<li><p>Inverse SHT (or inverse FFT) to get maps at each lambda sample.</p></li>
+</ol>
+<p>This ensures: - Correct angular power spectrum <code>C_ell(lambda)</code> at each lambda. - Prescribed correlation structure <code>rho(|Delta lambda|)</code> between different lambda values. - Field 4 source is always zero.</p>
+</section>
+<section id="interpolators" class="level4">
+<h4 class="anchored" data-anchor-id="interpolators">Interpolators</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sbar <span class="op">=</span> source.sbar_interpolator()      <span class="co"># callable(lam) -&gt; ndarray(n_fields,)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>delta_s <span class="op">=</span> source.delta_s_interpolator() <span class="co"># callable(lam) -&gt; ndarray(n_fields, npix)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Both use <code>scipy.interpolate.interp1d</code> (linear) along the lambda axis.</p>
+</section>
+</section>
+<section id="fluctuations.py" class="level3">
+<h3 class="anchored" data-anchor-id="fluctuations.py"><code>fluctuations.py</code></h3>
+<section id="fluctuationsolver" class="level4">
+<h4 class="anchored" data-anchor-id="fluctuationsolver"><code>FluctuationSolver</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> FluctuationSolver(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    saddle_result,      <span class="co"># SaddlePointResult</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    delta_s_func,       <span class="co"># callable(lam) -&gt; ndarray(n_fields, npix)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    npix,               <span class="co"># number of pixels</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    linear_only<span class="op">=</span><span class="va">False</span>,  <span class="co"># drop quadratic xi*xi term if True</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    lam_span<span class="op">=</span><span class="va">None</span>,      <span class="co"># override; default from saddle_result</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'RK45'</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    rtol<span class="op">=</span><span class="fl">1e-6</span>, atol<span class="op">=</span><span class="fl">1e-8</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span>lam_array)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The state vector has <code>n_fields * npix</code> components. The RHS is fully vectorized: - <code>M @ xi</code>: <code>(n_fields, n_fields) @ (n_fields, npix)</code> matrix multiply, uniform across pixels. - <code>quadratic(xi)</code>: element-wise arithmetic, vectorized over npix. - <code>delta_s(lam)</code>: interpolated source.</p>
+</section>
+<section id="fluctuationresult" class="level4">
+<h4 class="anchored" data-anchor-id="fluctuationresult"><code>FluctuationResult</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>result.lam                                      <span class="co"># shape (N_out,)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>result.xi                                       <span class="co"># shape (N_out, n_fields, npix)</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>result.get_maps(lam_index, field<span class="op">=</span><span class="va">None</span>)           <span class="co"># extract maps</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>result.power_spectra_fullsky(lam_index, nside)   <span class="co"># list of C_ell per field</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>result.power_spectra_flatsky(lam_index, nx, ny, dx)  <span class="co"># (ell_centers, [C_ell per field])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="solver.py" class="level3">
+<h3 class="anchored" data-anchor-id="solver.py"><code>solver.py</code></h3>
+<section id="sachsfieldsolver-high-level" class="level4">
+<h4 class="anchored" data-anchor-id="sachsfieldsolver-high-level"><code>SachsFieldSolver</code> (high-level)</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> SachsFieldSolver(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    source,             <span class="co"># FullSkySource or FlatSkySource</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    lam_span,           <span class="co"># (lam_start, lam_end)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    sbar_func<span class="op">=</span><span class="va">None</span>,     <span class="co"># override; default from source.sbar_interpolator()</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    linear_only<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    saddle_kwargs<span class="op">=</span>{},   <span class="co"># extra args for SaddlePointSolver</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    fluct_kwargs<span class="op">=</span>{},    <span class="co"># extra args for FluctuationSolver</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span>lam_array)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="fullresult" class="level4">
+<h4 class="anchored" data-anchor-id="fullresult"><code>FullResult</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>result.saddle                   <span class="co"># SaddlePointResult</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>result.fluctuation              <span class="co"># FluctuationResult</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>result.total_field(lam_index)   <span class="co"># chi + xi, shape (n_fields, npix)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="utils.py" class="level3">
+<h3 class="anchored" data-anchor-id="utils.py"><code>utils.py</code></h3>
+<p>Visualization and summary statistics.</p>
+<section id="animation" class="level4">
+<h4 class="anchored" data-anchor-id="animation">Animation</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>anim <span class="op">=</span> sf.animate_evolution(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    result,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">'fullsky'</span>,         <span class="co"># or 'flatsky'</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    nside<span class="op">=</span><span class="dv">32</span>,               <span class="co"># for fullsky</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># nx=64, ny=64, dx=dx,  # for flatsky</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    fields<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>],       <span class="co"># which fields to show</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    show_saddle<span class="op">=</span><span class="va">False</span>,       <span class="co"># True for total field, False for xi only</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    interval<span class="op">=</span><span class="dv">200</span>,            <span class="co"># ms between frames</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display in notebook:</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> HTML</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>HTML(anim.to_jshtml())</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Or save:</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>anim.save(<span class="st">'evolution.mp4'</span>, writer<span class="op">=</span><span class="st">'ffmpeg'</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="pixel-pdf" class="level4">
+<h4 class="anchored" data-anchor-id="pixel-pdf">Pixel PDF</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maps <span class="op">=</span> result.fluctuation.xi[<span class="op">-</span><span class="dv">1</span>]  <span class="co"># shape (n_fields, npix)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hist_data, ax <span class="op">=</span> sf.pixel_pdf(maps, n_bins<span class="op">=</span><span class="dv">50</span>, log_counts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># hist_data[i] = (bin_centers, counts, bin_edges) for field i</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="angular-power-spectrum" class="level4">
+<h4 class="anchored" data-anchor-id="angular-power-spectrum">Angular Power Spectrum</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Full-sky</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ells, cls <span class="op">=</span> sf.angular_power_spectrum(maps, mode<span class="op">=</span><span class="st">'fullsky'</span>, nside<span class="op">=</span><span class="dv">32</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Flat-sky</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ells, cls <span class="op">=</span> sf.angular_power_spectrum(maps, mode<span class="op">=</span><span class="st">'flatsky'</span>, nx<span class="op">=</span><span class="dv">64</span>, ny<span class="op">=</span><span class="dv">64</span>, dx<span class="op">=</span>dx)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>sf.plot_power_spectra(ells, cls)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="combined-summary" class="level4">
+<h4 class="anchored" data-anchor-id="combined-summary">Combined Summary</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig, stats <span class="op">=</span> sf.summary_statistics(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    result, lam_index<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">'fullsky'</span>, nside<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    show_saddle<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># stats contains: 'mean', 'std', 'skew', 'kurtosis', 'ells', 'cls', 'pdf'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="evolution-of-statistics" class="level4">
+<h4 class="anchored" data-anchor-id="evolution-of-statistics">Evolution of Statistics</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, time_stats <span class="op">=</span> sf.evolution_summary(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    result, mode<span class="op">=</span><span class="st">'fullsky'</span>, nside<span class="op">=</span><span class="dv">32</span>, show_saddle<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># time_stats contains: 'lam', 'rms', 'skew', 'kurtosis' (each a dict per field)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+</section>
+<section id="usage-examples" class="level2">
+<h2 class="anchored" data-anchor-id="usage-examples">Usage Examples</h2>
+<section id="minimal-saddle-point-only" class="level3">
+<h3 class="anchored" data-anchor-id="minimal-saddle-point-only">Minimal: saddle point only</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sachsfield <span class="im">as</span> sf</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sbar(lam):</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array([<span class="fl">0.1</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>])</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> sf.SaddlePointSolver(sbar, lam_span<span class="op">=</span>(<span class="op">-</span><span class="fl">1e-4</span>, <span class="op">-</span><span class="fl">5.0</span>), n_fields<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve()</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpolate at any lambda</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>chi <span class="op">=</span> result(<span class="op">-</span><span class="fl">2.0</span>)  <span class="co"># ndarray shape (3,)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="full-evolution-with-sources" class="level3">
+<h3 class="anchored" data-anchor-id="full-evolution-with-sources">Full evolution with sources</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sachsfield <span class="im">as</span> sf</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Power spectra as function of lambda</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cl_func(lam):</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    ell <span class="op">=</span> np.arange(<span class="dv">97</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    cl <span class="op">=</span> <span class="fl">1e-4</span> <span class="op">/</span> (ell <span class="op">+</span> <span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    cl[<span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cl, <span class="fl">0.5</span><span class="op">*</span>cl, <span class="fl">0.3</span><span class="op">*</span>cl</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate lambda-correlated source fields</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>source <span class="op">=</span> sf.FullSkySource(</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    cl_func,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    lam_samples<span class="op">=</span>np.linspace(<span class="op">-</span><span class="fl">0.01</span>, <span class="op">-</span><span class="fl">3.0</span>, <span class="dv">30</span>),</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    nside<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    corr_func<span class="op">=</span><span class="kw">lambda</span> dl: np.exp(<span class="op">-</span>dl<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> <span class="fl">0.5</span>),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve everything</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> sf.SachsFieldSolver(source, lam_span<span class="op">=</span>(<span class="op">-</span><span class="fl">1e-3</span>, <span class="op">-</span><span class="fl">3.0</span>), n_fields<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>t_eval <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1e-3</span>, <span class="op">-</span><span class="fl">3.0</span>, <span class="dv">20</span>)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span>t_eval)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Get total field x = chi + xi</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> result.total_field(<span class="op">-</span><span class="dv">1</span>)  <span class="co"># shape (3, npix), at final lambda</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="flat-sky-patch" class="level3">
+<h3 class="anchored" data-anchor-id="flat-sky-patch">Flat-sky patch</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>source <span class="op">=</span> sf.FlatSkySource(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    cl_func,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    lam_samples<span class="op">=</span>np.linspace(<span class="op">-</span><span class="fl">0.01</span>, <span class="op">-</span><span class="fl">3.0</span>, <span class="dv">30</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    nx<span class="op">=</span><span class="dv">128</span>, ny<span class="op">=</span><span class="dv">128</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    dx<span class="op">=</span>np.radians(<span class="fl">10.0</span>) <span class="op">/</span> <span class="dv">128</span>,  <span class="co"># 10-degree patch</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    n_fields<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> sf.SachsFieldSolver(source, lam_span<span class="op">=</span>(<span class="op">-</span><span class="fl">1e-3</span>, <span class="op">-</span><span class="fl">3.0</span>), n_fields<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span>t_eval)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="performance" class="level2">
+<h2 class="anchored" data-anchor-id="performance">Performance</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 14%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>nside</th>
+<th>npix</th>
+<th>n_fields</th>
+<th>ODE size</th>
+<th>Typical wall time (linear, 20 output steps)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>8</td>
+<td>768</td>
+<td>3</td>
+<td>2,304</td>
+<td>&lt; 1 s</td>
+</tr>
+<tr class="even">
+<td>32</td>
+<td>12,288</td>
+<td>3</td>
+<td>36,864</td>
+<td>~10 s</td>
+</tr>
+<tr class="odd">
+<td>64</td>
+<td>49,152</td>
+<td>3</td>
+<td>147,456</td>
+<td>~minutes</td>
+</tr>
+</tbody>
+</table>
+<p>The source generation step (Cholesky per ell mode) is also significant for large <code>lmax</code> and many lambda samples.</p>
+</section>
+<section id="conventions" class="level2">
+<h2 class="anchored" data-anchor-id="conventions">Conventions</h2>
+<ul>
+<li><strong>Indexing:</strong> Fields are 0-indexed internally: <code>a in {0, 1, 2}</code> for <code>n_fields=3</code> or <code>{0, 1, 2, 3}</code> for <code>n_fields=4</code>. This maps to the physics notation <code>x_1, x_2, x_3, x_4</code>.</li>
+<li><strong>Lambda direction:</strong> Evolution runs from <code>lam_start</code> (near 0, negative) to <code>lam_end</code> (more negative). Both values are negative.</li>
+<li><strong>Units:</strong> The package is unit-agnostic. All quantities are in whatever units the user provides for <code>sbar_func</code>, <code>cl_func</code>, and <code>lam_span</code>.</li>
+<li><strong>Source normalization:</strong> <code>cl_func(lam)</code> returns angular power spectra <code>C_ell^{aa}</code> with standard normalization (variance = sum of <code>(2ell+1) C_ell / (4 pi)</code>). The flat-sky source uses <code>P(k) = C_ell / dx^2</code> internally.</li>
+</ul>
+<hr>
+</section>
+<section id="perflrw-cosmological-source-generation" class="level2">
+<h2 class="anchored" data-anchor-id="perflrw-cosmological-source-generation">perFLRW — Cosmological Source Generation</h2>
+<p>The <code>perFLRW</code> module wraps <a href="https://github.com/LSSTDESC/CCL">PyCCL</a> to derive physical source terms for the Sachs equations from an FLRW cosmology.</p>
+<section id="installation-1" class="level3">
+<h3 class="anchored" data-anchor-id="installation-1">Installation</h3>
+<p>Requires <code>pyccl</code> (not needed for <code>sachsfield</code> core):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge pyccl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="quick-start" class="level3">
+<h3 class="anchored" data-anchor-id="quick-start">Quick Start</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perFLRW <span class="im">import</span> FLRWCosmology</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>flrw <span class="op">=</span> FLRWCosmology(Omega_c<span class="op">=</span><span class="fl">0.25</span>, Omega_b<span class="op">=</span><span class="fl">0.05</span>, h<span class="op">=</span><span class="fl">0.7</span>, sigma8<span class="op">=</span><span class="fl">0.8</span>, n_s<span class="op">=</span><span class="fl">0.96</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="flrwcosmology-api" class="level3">
+<h3 class="anchored" data-anchor-id="flrwcosmology-api"><code>FLRWCosmology</code> API</h3>
+<section id="constructor" class="level4">
+<h4 class="anchored" data-anchor-id="constructor">Constructor</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>FLRWCosmology(Omega_c, Omega_b, h, sigma8, n_s, E_co<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>              z_max<span class="op">=</span><span class="fl">10.0</span>, n_table<span class="op">=</span><span class="dv">2000</span>, <span class="op">**</span>ccl_kwargs)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Or wrap an existing pyccl.Cosmology:</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>FLRWCosmology.from_ccl(cosmo, E_co<span class="op">=</span><span class="fl">1.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>E_co</code>: comoving photon energy (constant along null geodesic). Appears in both the affine parameter mapping and Phi_00.</li>
+<li><code>**ccl_kwargs</code>: passed to <code>pyccl.Cosmology</code> (e.g., <code>w0</code>, <code>wa</code>, <code>transfer_function</code>).</li>
+</ul>
+</section>
+<section id="affine-parameter-mapping" class="level4">
+<h4 class="anchored" data-anchor-id="affine-parameter-mapping">Affine parameter mapping</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>lam <span class="op">=</span> flrw.lambda_of_z(z)     <span class="co"># lambda(z), negative for z &gt; 0</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>z   <span class="op">=</span> flrw.z_of_lambda(lam)   <span class="co"># z(lambda), inverse</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Computed from <code>dlambda/dz = -1 / ((1+z)^2 H(z) E_co)</code> via cumulative trapezoidal integration on a dense grid, stored as cubic interpolation tables.</p>
+</section>
+<section id="background-phi_00" class="level4">
+<h4 class="anchored" data-anchor-id="background-phi_00">Background Phi_00</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>phi00 <span class="op">=</span> flrw.background_phi00(z)              <span class="co"># Phi_00(z), units 1/Mpc^2</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>phi00 <span class="op">=</span> flrw.background_phi00_of_lambda(lam)  <span class="co"># same via lambda</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Uses the standard Sachs convention:</p>
+<pre><code>Phi_00 = 4 pi G (rho + P)_total (E_co / a)^2</code></pre>
+<p>Components: matter (P=0), radiation (P=rho/3), dark energy (P=w(a)*rho, CPL parameterization).</p>
+</section>
+<section id="angular-power-spectra" class="level4">
+<h4 class="anchored" data-anchor-id="angular-power-spectra">Angular power spectra</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ell, cl_phi00, cl_psi0 <span class="op">=</span> flrw.sachs_cls(z, lmax<span class="op">=</span><span class="dv">2000</span>, delta_z<span class="op">=</span><span class="fl">0.005</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>ell, cl_phi00, cl_psi0 <span class="op">=</span> flrw.sachs_cls_of_lambda(lam, lmax<span class="op">=</span><span class="dv">2000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Uses a custom PyCCL tracer with a narrow Gaussian selection function. The Weyl shear spectrum is derived via the spin-2 correction: <code>C_l^{Psi_0} = C_l^{Phi_00} * l(l+1) / ((l+2)(l-1))</code>.</p>
+</section>
+<section id="sachsfield-compatible-callables" class="level4">
+<h4 class="anchored" data-anchor-id="sachsfield-compatible-callables">sachsfield-compatible callables</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Background source for saddle point</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>sbar <span class="op">=</span> flrw.sbar_func(n_fields<span class="op">=</span><span class="dv">3</span>)   <span class="co"># sbar(lam) -&gt; ndarray(3,)</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Power spectra for source generation</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>cl_func <span class="op">=</span> flrw.cl_func(z_array<span class="op">=</span>np.linspace(<span class="fl">0.01</span>, <span class="dv">2</span>, <span class="dv">20</span>), lmax<span class="op">=</span><span class="dv">96</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># cl_func(lam) -&gt; (cl_11, cl_22, cl_33)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>These plug directly into <code>sachsfield</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sachsfield <span class="im">as</span> sf</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>source <span class="op">=</span> sf.FullSkySource(cl_func, lam_samples, nside, seed<span class="op">=</span><span class="dv">42</span>, n_fields<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> sf.SachsFieldSolver(source, lam_span<span class="op">=</span>(lam_start, lam_end),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                              sbar_func<span class="op">=</span>sbar, n_fields<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> solver.solve(t_eval<span class="op">=</span>t_eval)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

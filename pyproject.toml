@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "sachsfield"
+version = "0.1.0"
+description = "Scalar field evolution for Sachs optical equations"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "healpy>=1.15",
+]
+
+[project.optional-dependencies]
+dev = ["matplotlib", "jupyter"]
