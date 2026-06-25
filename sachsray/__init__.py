@@ -13,7 +13,7 @@ or non-Gaussian) and fed in as smooth cubic control paths.
 See prototype/REDESIGN.md for the design rationale.
 """
 
-from . import physics, solvers, raytrace
+from . import physics, solvers, raytrace, fields
 from .physics import (
     riccati_rhs,
     tidal_matrix,
@@ -28,11 +28,13 @@ from .solvers import (
     solve_riccati,
 )
 from .raytrace import DrivingField, background_distance, trace_rays
+from .fields import driving_from_components, driving_from_source
 
 __all__ = [
     "physics",
     "solvers",
     "raytrace",
+    "fields",
     "riccati_rhs",
     "tidal_matrix",
     "deformation_rate",
@@ -45,4 +47,6 @@ __all__ = [
     "DrivingField",
     "background_distance",
     "trace_rays",
+    "driving_from_components",
+    "driving_from_source",
 ]

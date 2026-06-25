@@ -88,14 +88,17 @@ where `T = [[Φ₀₀+ReΨ₀, ImΨ₀],[ImΨ₀, Φ₀₀−ReΨ₀]]`.
 ## Migration path (hybrid, prototype-validated)
 1. ✅ **Prototype** (`prototype/`): diffrax Jacobi core + benchmark vs scipy. DONE —
    confirms diffrax works, Jacobi is exact & caustic-robust, cubic ≫ linear, vmap+chunk runs.
-2. **Package the core**: promote `sachs_jax.py` to `sachsray/` (scalar + 2×2 matrix
-   Jacobi, control-path primary + SDE optional, chunked vmap driver, observables).
-3. **Field-generation adapter**: wrap the existing `sources.py` / `perFLRW` output as
-   `(λ-grid, map)` arrays feeding the new core; add a non-Gaussian field entry point.
-4. **Cross-validate**: Jacobi-derived observables vs the existing Riccati `x_a` MC in the
-   pre-caustic regime (boundary-validation: both must agree where both are valid), and vs
-   the draft's analytic FF/FK channels.
-5. **Scale test** on GPU at nside ≥ 256 with chunked streaming; pin peak memory.
+2. ✅ **Package the core** → `sachsray/` (scalar + 2×2 matrix Jacobi, cubic-control driving,
+   chunked vmap driver, observables). 8/8 unit tests.
+3. ✅ **Field-generation adapter** (`sachsray/fields.py`): `driving_from_components`
+   (generic, non-Gaussian-ready) + `driving_from_source` (duck-typed bridge to
+   `sachsfield.FullSkySource`/`FlatSkySource`). Assembles `Φ₀₀=Φ̄₀₀+δΦ₀₀`. End-to-end
+   test generates a real correlated full-sky realisation (healpy) → κ/γ/ω maps.
+4. ◑ **Cross-validate**: ✅ Riccati↔Jacobi convention checks; ✅ **Born-limit** — the full
+   pipeline reproduces `κ = −∫(λ_s−λ')λ'/λ_s · δΦ₀₀ dλ'` to <5% (`tests/test_fields.py`).
+   Pending: end-to-end vs the existing `x_a` MC two-point and the draft's FF/FK channels.
+5. ⬜ **Scale test** on GPU at nside ≥ 256 with chunked streaming; pin peak memory
+   (CPU-only here — code is device-agnostic/float32-ready).
 
 ## Open questions to resolve during step 2–4
 - Exact sign/normalisation of the Weyl term in `T` and the `A = 𝒥/D_bg` observable
