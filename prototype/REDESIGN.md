@@ -94,9 +94,13 @@ where `T = [[Φ₀₀+ReΨ₀, ImΨ₀],[ImΨ₀, Φ₀₀−ReΨ₀]]`.
    (generic, non-Gaussian-ready) + `driving_from_source` (duck-typed bridge to
    `sachsfield.FullSkySource`/`FlatSkySource`). Assembles `Φ₀₀=Φ̄₀₀+δΦ₀₀`. End-to-end
    test generates a real correlated full-sky realisation (healpy) → κ/γ/ω maps.
-4. ◑ **Cross-validate**: ✅ Riccati↔Jacobi convention checks; ✅ **Born-limit** — the full
-   pipeline reproduces `κ = −∫(λ_s−λ')λ'/λ_s · δΦ₀₀ dλ'` to <5% (`tests/test_fields.py`).
-   Pending: end-to-end vs the existing `x_a` MC two-point and the draft's FF/FK channels.
+4. ✅ **Cross-validate**: Riccati↔Jacobi convention checks; **Born-limit** (full pipeline
+   reproduces `κ = −∫(λ_s−λ')λ'/λ_s · δΦ₀₀ dλ'` to <5%, `tests/test_fields.py`); and the
+   **end-to-end** check (`tests/test_xval_endtoend.py`) — the new Jacobi solver reproduces
+   the OLD production `FluctuationSolver` (nonlinear Riccati `x_a` MC) on the same full-sky
+   realisation to ~0.1% (θ, σ₊, σ_×), incl. nonlinear FF propagation, confirming `x₁=2θ`.
+   (A direct comparison to the draft's published FF/FK *figure* would additionally need the
+   `sft_wick` analytic side; the MC side is now validated against the new solver.)
 5. ⬜ **Scale test** on GPU at nside ≥ 256 with chunked streaming; pin peak memory
    (CPU-only here — code is device-agnostic/float32-ready).
 
