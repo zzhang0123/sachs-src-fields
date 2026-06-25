@@ -27,7 +27,7 @@ from .solvers import (
     solve_jacobi_matrix,
     solve_riccati,
 )
-from .raytrace import DrivingField, background_distance, trace_rays
+from .raytrace import DrivingField, background_distance, trace_rays, trace_rays_streaming
 from .fields import driving_from_components, driving_from_source
 
 __all__ = [
@@ -47,6 +47,7 @@ __all__ = [
     "DrivingField",
     "background_distance",
     "trace_rays",
+    "trace_rays_streaming",
     "driving_from_components",
     "driving_from_source",
 ]

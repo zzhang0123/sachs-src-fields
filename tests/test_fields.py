@@ -88,6 +88,26 @@ def test_driving_from_fullsky_source_end_to_end():
     assert np.std(np.asarray(out["kappa"])) > 0.0
 
 
+def test_streaming_matches_trace_rays():
+    """trace_rays_streaming (per-chunk generation) must equal trace_rays
+    (full field in memory) for the same realisation."""
+    n_lam, npix, lam_s = 48, 80, 2.0
+    lam, dphi, dpre, dpim = _synthetic_components(n_lam, npix, seed=3)
+    phi00_bg = np.full(n_lam, -0.05)
+    field = sr.driving_from_components(lam, dphi, dpre, dpim, phi00_bg, dtype=np.float64)
+
+    ref = sr.trace_rays(field, lam_s, chunk=32, rtol=1e-8, atol=1e-10)
+
+    def gen_chunk(start, size):
+        return np.asarray(field.maps[start:start + size])
+
+    stream = sr.trace_rays_streaming(
+        field.ts, lam_s, npix, gen_chunk, field.phi00_bg, chunk=32, rtol=1e-8, atol=1e-10
+    )
+    for k in ("kappa", "gamma1", "gamma2", "omega"):
+        assert np.allclose(np.asarray(stream[k]), np.asarray(ref[k]), atol=1e-7), f"{k} mismatch"
+
+
 def test_born_convergence_limit():
     """Weak limit: kappa from the full Jacobi pipeline matches the analytic Born
     integral kappa = -int (lam_s-lam')lam'/lam_s * dPhi00 dlam' (vacuum bg, no
