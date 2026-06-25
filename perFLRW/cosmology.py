@@ -178,8 +178,13 @@ class FLRWCosmology:
     def background_phi00(self, z):
         """Background Ricci focusing term Phi_00(z).
 
-        Computes Phi_00 = 4 pi G (rho + P)_total (E_co / a)^2
-        using the standard Sachs convention.
+        Computes the FLRW limit of the Sachs scalar (draft eq:driving bg),
+
+            Phi_00^(0) = -(E/a)^2 (H^2 - H') = -4 pi G (rho + P)_total (E_co/a)^2,
+
+        which is STRICTLY NEGATIVE for ordinary matter (an overdensity focuses
+        the beam). [Sign corrected: the previous +4 pi G ... had the wrong sign
+        relative to eq:driving bg.]
 
         Parameters
         ----------
@@ -212,7 +217,8 @@ class FLRWCosmology:
         w = self._w_de(a)
         sum_rho_p = rho_m + (4.0 / 3.0) * rho_r + (1.0 + w) * rho_de
 
-        phi00 = self._four_pi_G * sum_rho_p * (self.E_co / a)**2
+        # Phi_00^(0) = -(E/a)^2 (H^2 - H') = -4 pi G (rho+P)/a^2  (focusing, < 0)
+        phi00 = -self._four_pi_G * sum_rho_p * (self.E_co / a)**2
 
         return float(phi00[0]) if phi00.size == 1 else phi00
 
@@ -230,6 +236,22 @@ class FLRWCosmology:
         """
         z = self.z_of_lambda(lam)
         return self.background_phi00(z)
+
+    def _phi00_delta_prefactor(self, a, rho_m):
+        """delta_m -> Phi_00^(1) conversion prefactor (sub-horizon, Phi=Psi).
+
+        From the scalar first-order driving field (draft eq:Phi00 scalar), the
+        two-spatial-derivative terms reduce (the radial pieces cancel for
+        Phi=Psi) to  Phi_00^(1) ~ -(E0(1+z))^2/a^2 * grad^2 Phi.  The Poisson
+        equation  grad^2 Phi = 4 pi G a^2 rho_m delta_m  then gives
+
+            Phi_00^(1) ~ -4 pi G (E_co)^2 rho_m / a^2 * delta_m,
+
+        i.e. a NEGATIVE prefactor: an overdensity focuses the beam
+        (Phi_00 < 0), consistent with Phi_00 ~= -A delta_m (cosmology.tex) and
+        with background_phi00. [Sign corrected; previously +.]
+        """
+        return -self._four_pi_G * rho_m * self.E_co**2 / a**2
 
     # ------------------------------------------------------------------
     # 3. Angular power spectra
@@ -306,7 +328,10 @@ class FLRWCosmology:
             ccl.background.rho_x(self.cosmo, ai, 'matter', is_comoving=False)
             for ai in a_arr])
 
-        conversion = self._four_pi_G * rho_m_arr * self.E_co**2 / a_arr**2
+        # delta_m -> Phi_00^(1); NEGATIVE prefactor (focusing). Auto-C_l is
+        # unchanged by the sign (it enters squared); the sign matters only for
+        # sign-sensitive uses (cross / three-point), now physically correct.
+        conversion = self._phi00_delta_prefactor(a_arr, rho_m_arr)
 
         H_arr = ccl.h_over_h0(self.cosmo, a_arr) * self.H0_Mpc
         dchi_dz = 1.0 / H_arr
@@ -397,8 +422,14 @@ class FLRWCosmology:
     def sbar_func(self, n_fields=3):
         """Return a callable for the saddle-point source.
 
-        The background source is s_bar_1(lambda) = Phi_00^{bg}(lambda),
+        The background source is s_bar_1(lambda) = 2 * Phi_00^{bg}(lambda),
         with all other components zero.
+
+        The factor of 2 is the x1 = 2*theta convention of SaddlePointSolver
+        (coefficients.py uses F_111 = -1/2): the field-1 ODE is
+        d(x1)/dlam = -1/2 x1^2 + s1, so reproducing the physical Sachs
+        d(theta)/dlam = -theta^2 + Phi_00 requires s1 = 2*Phi_00. (For a
+        theta-convention solver such as sachsray, use s1 = Phi_00.)
 
         Parameters
         ----------
@@ -413,7 +444,7 @@ class FLRWCosmology:
         def _sbar(lam):
             phi00 = self.background_phi00_of_lambda(lam)
             out = np.zeros(n_fields)
-            out[0] = phi00
+            out[0] = 2.0 * phi00  # x1 = 2*theta convention -> s1 = 2*Phi_00
             return out
         return _sbar
 
