@@ -77,6 +77,7 @@ def solve_jacobi_matrix(
     drive_grid: jax.Array,
     lam_eval: jax.Array,
     *,
+    y0: jax.Array | None = None,
     rtol: float = 1e-8,
     atol: float = 1e-10,
     max_steps: int = 100_000,
@@ -84,7 +85,10 @@ def solve_jacobi_matrix(
 ) -> jax.Array:
     """Integrate ``Jddot = T(lam) J``; state (J[4], Jdot[4]) flattened to 8.
 
-    ``drive_grid``: (n_lam, 3) samples of (Phi00, W1, W2). IC J(0)=0, Jdot(0)=I.
+    ``drive_grid``: (n_lam, 3) samples of (Phi00, W1, W2).
+    ``y0``: optional initial (J[4], Jdot[4]) at ``ts_grid[0]``; defaults to the
+    observer-vertex IC J=0, Jdot=I. Pass a non-vertex IC (e.g. J=lam0*I, Jdot=I)
+    to start a ray mid-path from a given background.
     Returns (len(lam_eval), 8): first 4 cols J (row-major), last 4 Jdot.
     """
     solver = solver or diffrax.Tsit5()
@@ -97,9 +101,10 @@ def solve_jacobi_matrix(
         T = physics.tidal_matrix(d[0], d[1], d[2])
         return jnp.concatenate([Jd.reshape(-1), (T @ J).reshape(-1)])
 
-    J0 = jnp.zeros((2, 2), dtype=drive_grid.dtype)
-    Jd0 = jnp.eye(2, dtype=drive_grid.dtype)
-    y0 = jnp.concatenate([J0.reshape(-1), Jd0.reshape(-1)])
+    if y0 is None:
+        J0 = jnp.zeros((2, 2), dtype=drive_grid.dtype)
+        Jd0 = jnp.eye(2, dtype=drive_grid.dtype)
+        y0 = jnp.concatenate([J0.reshape(-1), Jd0.reshape(-1)])
     return _solve(diffrax.ODETerm(vf), y0, ts_grid, lam_eval, solver, rtol, atol, max_steps)
 
 
