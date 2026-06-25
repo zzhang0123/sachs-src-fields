@@ -101,8 +101,12 @@ where `T = [[Φ₀₀+ReΨ₀, ImΨ₀],[ImΨ₀, Φ₀₀−ReΨ₀]]`.
    realisation to ~0.1% (θ, σ₊, σ_×), incl. nonlinear FF propagation, confirming `x₁=2θ`.
    (A direct comparison to the draft's published FF/FK *figure* would additionally need the
    `sft_wick` analytic side; the MC side is now validated against the new solver.)
-5. ⬜ **Scale test** on GPU at nside ≥ 256 with chunked streaming; pin peak memory
-   (CPU-only here — code is device-agnostic/float32-ready).
+5. ✅ **Scale path ready** (`sachsray.trace_rays_streaming` + `prototype/scale_test.py`):
+   per-chunk field generation, full `(npix, n_lam, 3)` field NEVER materialised (peak ~ one
+   chunk, ~13 MB at chunk=8192). Device-agnostic. Measured on the M3 Ultra **CPU**: ~66k
+   rays/s; nside=256 ~12s, 512 ~48s, 1024 ~3.2 min, all with bounded memory. GPU target is
+   **NVIDIA/CUDA** (Apple-Silicon GPU unsupported by JAX / jax-metal incompatible) — the
+   same code runs there unchanged with a larger chunk.
 
 ## Open questions to resolve during step 2–4
 - Exact sign/normalisation of the Weyl term in `T` and the `A = 𝒥/D_bg` observable
