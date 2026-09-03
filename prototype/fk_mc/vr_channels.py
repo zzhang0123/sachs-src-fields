@@ -1,4 +1,8 @@
-"""Physical FK (and O0, FF) channels of the convergence 2-point xi_kappa(gamma),
+"""SUPERSEDED (2026-09-03): the FK numbers produced here are RETRACTED (June cut1000
+vertex, single-leg simulate_fk_vr, nominal-Q calibration; and C_BB^FK = 0 identically,
+not "B = E"). See prototype/fk_mc/README.md and prototype/bmode_audit/REPORT.md.
+
+Physical FK (and O0, FF) channels of the convergence 2-point xi_kappa(gamma),
 via the paper's variance-reduced estimators, at physical amplitude.
 
 FK is isolated by the VR estimator (Q pulled outside the ensemble average) -- the

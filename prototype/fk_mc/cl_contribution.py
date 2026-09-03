@@ -1,4 +1,8 @@
-"""Non-Gaussian contribution to the convergence angular power spectrum.
+"""SUPERSEDED (2026-09-03): the FK numbers produced here are RETRACTED (June cut1000
+vertex, single-leg simulate_fk_vr, nominal-Q calibration; and C_BB^FK = 0 identically,
+not "B = E"). See prototype/fk_mc/README.md and prototype/bmode_audit/REPORT.md.
+
+Non-Gaussian contribution to the convergence angular power spectrum.
 
 The convergence kappa is spin-0, so its angular power spectrum is the order-0
 Hankel (flat-sky / small-angle) transform of the 2-point function,

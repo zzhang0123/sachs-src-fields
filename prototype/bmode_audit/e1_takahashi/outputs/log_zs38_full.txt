@@ -1,0 +1,8 @@
+[08:56:59] zs38:kappa read+prep 1.1s  stats={'mean': -1.6238495526010865e-07, 'rms': 0.0443911776101643, 'std': 0.04439117760986729, 'min': -0.19117164611816406, 'max': 0.9535828232765198, 'n_nonfinite': 0}
+[08:57:00] zs38:gamma1 read+prep 1.3s  stats={'mean': 4.802336798893451e-05, 'rms': 0.03168654538541894, 'std': 0.03168650899386585, 'min': -0.32737863063812256, 'max': 0.30890047550201416, 'n_nonfinite': 0}
+[08:57:01] zs38:gamma2 read+prep 1.3s  stats={'mean': -5.595599290567194e-07, 'rms': 0.031049408980379976, 'std': 0.031049408975337894, 'min': -0.30630987882614136, 'max': 0.33206290006637573, 'n_nonfinite': 0}
+[08:57:02] zs38:omega read+prep 1.2s  stats={'mean': 3.0157315677641466e-09, 'rms': 0.0006047775347173573, 'std': 0.0006047775347098383, 'min': -0.019900038838386536, 'max': 0.015769578516483307, 'n_nonfinite': 0}
+[08:57:09] map2alm kappa 6.6s
+[08:57:16] map2alm omega 6.7s
+[08:57:39] map2alm_spin (gamma2 sign +1) 23.1s
+[08:57:39] saved /Users/zzhang/projects/SFT/src-field/prototype/bmode_audit/e1_takahashi/outputs/spectra_zs38_full_nside4096_lmax4096.npz  (42s total)

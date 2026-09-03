@@ -15,6 +15,23 @@ from scipy.interpolate import interp1d
 import pyccl as ccl
 
 
+def spin2_power_ratio(ell):
+    """C_ell^{Psi_0} / C_ell^{Phi_00} for driving fields sourced by one scalar potential.
+
+    Per multipole the Ricci focusing is the screen Laplacian, multiplier
+    L^2/chi^2 with L^2 = l(l+1), and the Weyl shear is the trace-free screen
+    Hessian (eth^2), multiplier sqrt(L^2 (L^2 - 2))/chi^2 (draft appendix,
+    eq. 'appendix screen hessian'). The power ratio is therefore
+
+        (L^2 - 2)/L^2 = (l+2)(l-1) / (l(l+1))  < 1,
+
+    tending to 1 as l -> infinity. Before 2026-09-03 this module used the
+    INVERSE, l(l+1)/((l+2)(l-1)); the error is 2/L^2 (0.1% at l = 45).
+    """
+    ell = np.asarray(ell, dtype=float)
+    return (ell + 2.0) * (ell - 1.0) / (ell * (ell + 1.0))
+
+
 class FLRWCosmology:
     """FLRW cosmology interface for the Sachs optical equations.
 
@@ -290,13 +307,10 @@ class FLRWCosmology:
         tracer_phi00, _ = self._make_phi00_tracer(z, delta_z=delta_z)
         cl_phi00 = ccl.angular_cl(self.cosmo, tracer_phi00, tracer_phi00, ell)
 
-        # --- Psi_0 tracer (Weyl shear) ---
-        # Psi_0 is the Weyl lensing shear sourced by matter.
-        # At high ell (Limber), the spin-2 Weyl contribution differs
-        # from the spin-0 Ricci by the geometric factor:
-        #   C_l^{Psi_0} = C_l^{Phi_00} * l(l+1) / ((l+2)(l-1))
-        # This comes from the Bessel function derivative for spin-2.
-        cl_psi0 = cl_phi00 * ell * (ell + 1.0) / ((ell + 2.0) * (ell - 1.0))
+        # --- Psi_0 (Weyl shear) ---
+        # Same scalar potential as Phi_00; the spin-2 (eth^2) multiplier gives
+        # C_l^{Psi_0} = C_l^{Phi_00} * (l+2)(l-1) / (l(l+1)), see spin2_power_ratio.
+        cl_psi0 = cl_phi00 * spin2_power_ratio(ell)
 
         return ell, cl_phi00, cl_psi0
 
@@ -392,7 +406,7 @@ class FLRWCosmology:
             for j in range(i, n_z):
                 cl_ij = ccl.angular_cl(self.cosmo, tracers[i], tracers[j], ell)
                 if field == 'psi0':
-                    cl_ij = cl_ij * ell * (ell + 1.0) / ((ell + 2.0) * (ell - 1.0))
+                    cl_ij = cl_ij * spin2_power_ratio(ell)
                 cl_matrix[i, j, :] = cl_ij
                 cl_matrix[j, i, :] = cl_ij  # symmetric
 

@@ -1,0 +1,16 @@
+n_lam=300 amp=1e-07 rtol=1e-06: std(kappa)=1.16e-03 std(gamma1)=1.17e-03 std(omega)=2.85e-06
+   kappa  : rms err float32 = 3.92e-06 (3.3e-03 of std(gamma)) | float64@same tol = 3.81e-06 (3.2e-03)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma1 : rms err float32 = 3.62e-06 (3.1e-03 of std(gamma)) | float64@same tol = 3.77e-06 (3.2e-03)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma2 : rms err float32 = 1.59e-06 (1.4e-03 of std(gamma)) | float64@same tol = 1.54e-06 (1.3e-03)  | B-target 1e-2*std(gamma) = 1.2e-05
+   omega  : rms err float32 = 6.37e-09 (5.4e-06 of std(gamma)) | float64@same tol = 6.46e-09 (5.5e-06)  | B-target 1e-2*std(gamma) = 1.2e-05
+n_lam=300 amp=1e-07 rtol=1e-05: std(kappa)=1.16e-03 std(gamma1)=1.17e-03 std(omega)=2.85e-06
+   kappa  : rms err float32 = 1.76e-05 (1.5e-02 of std(gamma)) | float64@same tol = 1.83e-05 (1.6e-02)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma1 : rms err float32 = 1.66e-05 (1.4e-02 of std(gamma)) | float64@same tol = 1.90e-05 (1.6e-02)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma2 : rms err float32 = 1.16e-05 (9.9e-03 of std(gamma)) | float64@same tol = 1.10e-05 (9.4e-03)  | B-target 1e-2*std(gamma) = 1.2e-05
+   omega  : rms err float32 = 3.10e-08 (2.6e-05 of std(gamma)) | float64@same tol = 3.44e-08 (2.9e-05)  | B-target 1e-2*std(gamma) = 1.2e-05
+n_lam=300 amp=1e-07 rtol=1e-07: std(kappa)=1.16e-03 std(gamma1)=1.17e-03 std(omega)=2.85e-06
+   kappa  : rms err float32 = 7.76e-07 (6.6e-04 of std(gamma)) | float64@same tol = 6.48e-07 (5.5e-04)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma1 : rms err float32 = 7.47e-07 (6.4e-04 of std(gamma)) | float64@same tol = 6.15e-07 (5.2e-04)  | B-target 1e-2*std(gamma) = 1.2e-05
+   gamma2 : rms err float32 = 2.10e-07 (1.8e-04 of std(gamma)) | float64@same tol = 2.01e-07 (1.7e-04)  | B-target 1e-2*std(gamma) = 1.2e-05
+   omega  : rms err float32 = 1.35e-09 (1.1e-06 of std(gamma)) | float64@same tol = 9.78e-10 (8.3e-07)  | B-target 1e-2*std(gamma) = 1.2e-05
+42s

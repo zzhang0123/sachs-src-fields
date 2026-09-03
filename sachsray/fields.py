@@ -102,3 +102,64 @@ def driving_from_source(source, phi00_bg: np.ndarray | None = None, *, dtype=jnp
     return driving_from_components(
         source.lam_samples, ds[0], ds[1], ds[2], phi00_bg, dtype=dtype,
     )
+
+
+def driving_from_potential_alms(
+    ts: np.ndarray,
+    alms: np.ndarray,
+    nside: int,
+    *,
+    lmax: int,
+    scale: float = 1.0,
+    phi00_bg: np.ndarray | None = None,
+    dtype=jnp.float32,
+) -> DrivingField:
+    """Build a pure-E ``DrivingField`` from per-shell scalar-potential alms.
+
+    Both driving fields are derived from ONE scalar ``S`` per shell so that the
+    Weyl shear is the trace-free screen Hessian (a spin-2 ``eth eth S`` field,
+    pure E for every realisation) and the Ricci focusing is the screen
+    Laplacian::
+
+        Phi00 = scale * Lap S      (spin-0 alm multiplied by -l(l+1))
+        Psi0  = scale * eth eth S  (E-alm multiplied by -sqrt((l+2)!/(l-2)!), B = 0)
+
+    in the HEALPix ``(e_theta, e_phi)`` basis returned by ``healpy.alm2map_spin``.
+    The SAME sign on both multipliers is what makes the traced linear shear
+    reproduce the convergence (``kappa_E = +gamma_E``) with no B-mode; flipping
+    the sign of ``W2`` (or of one multiplier) yields B/E ~ 1. Pinned by the
+    2026-09-03 audit (``prototype/bmode_audit/A1/sachsray_eb_basis_test.py``,
+    ``prototype/bmode_audit/n1_sachsray``) and by ``tests/test_fields_pure_e.py``.
+
+    Use this instead of the legacy ``sachsfield.FullSkySource``, which draws
+    Re Psi0 and Im Psi0 as independent scalar maps and therefore has E = B.
+
+    Parameters
+    ----------
+    ts : (n_lam,) increasing affine-parameter grid.
+    alms : (n_lam, n_alm) complex healpy alms of the potential on each shell,
+        healpy ordering for ``lmax``.
+    nside : HEALPix resolution of the output maps.
+    lmax : band limit of ``alms``.
+    scale : overall multiplier applied to both fields (e.g. 1/2 for T = Hess/2).
+    phi00_bg : (n_lam,) background Phi00 (default zeros, vacuum).
+    """
+    import healpy as hp
+
+    ts = np.asarray(ts)
+    alms = np.asarray(alms)
+    if alms.ndim != 2 or alms.shape[0] != ts.shape[0]:
+        raise ValueError(f"alms must have shape (n_lam={ts.shape[0]}, n_alm); got {alms.shape}")
+    ell = np.arange(lmax + 1, dtype=float)
+    f_lap = -scale * ell * (ell + 1.0)
+    f_e = np.zeros(lmax + 1)
+    f_e[2:] = -scale * np.sqrt((ell[2:] + 2.0) * (ell[2:] + 1.0) * ell[2:] * (ell[2:] - 1.0))
+    phi00, w1, w2 = [], [], []
+    for a in alms:
+        phi00.append(hp.alm2map(hp.almxfl(a, f_lap), nside, lmax=lmax))
+        q, u = hp.alm2map_spin([hp.almxfl(a, f_e), np.zeros_like(a)], nside, 2, lmax)
+        w1.append(q)
+        w2.append(u)
+    return driving_from_components(
+        ts, np.stack(phi00), np.stack(w1), np.stack(w2), phi00_bg, dtype=dtype,
+    )

@@ -1,0 +1,6 @@
+nside=32 lmax=64 n_lam=48 npix=12288
+                        case std(kappa)  BB/EE(ray)  BB/EE(Born)  corr(k,E)   EE/kk
+                A=3e-3, s=+1   1.08e-01    2.22e-03     5.66e-06    -0.9972   0.983   [ray-Born: max|dk|/std=4.65e-01, max|dg1|/std=4.40e-01]  11s
+   A=3e-4, s=+1 (10x weaker)   3.43e-02    2.25e-04     1.35e-05    -0.9996   0.986   [ray-Born: max|dk|/std=1.32e-01, max|dg1|/std=1.95e-01]  10s
+   A=3e-3, U -> -U (control)   1.08e-01    9.25e-01     9.25e-01    -0.0017   0.514   [ray-Born: max|dk|/std=4.48e-01, max|dg1|/std=5.80e-01]  12s
+      A=3e-3, s=-1 (control)   1.07e-01    2.12e-03     4.10e-06    +0.9970   0.982   [ray-Born: max|dk|/std=5.63e-01, max|dg1|/std=4.81e-01]  11s

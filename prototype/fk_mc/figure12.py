@@ -1,4 +1,8 @@
-"""MC version of Figure 12 (draft label `fig: NLO 2pt FFFK cl`): the four
+"""SUPERSEDED (2026-09-03): the FK numbers produced here are RETRACTED (June cut1000
+vertex, single-leg simulate_fk_vr, nominal-Q calibration; and C_BB^FK = 0 identically,
+not "B = E"). See prototype/fk_mc/README.md and prototype/bmode_audit/REPORT.md.
+
+MC version of Figure 12 (draft label `fig: NLO 2pt FFFK cl`): the four
 weak-lensing angular power spectra
 
     C_l^{kappa kappa},  C_l^{EE}+C_l^{BB},  C_l^{EE}-C_l^{BB},  C_l^{kappa E},

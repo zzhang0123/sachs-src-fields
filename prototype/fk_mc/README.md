@@ -1,3 +1,47 @@
+> **SUPERSEDED / CORRECTION (2026-09-03).** The FK results in this folder
+> (`outputs/fk_channels.npz` fk/fk_se, `outputs/figure12_mc.png`, the "Result in one
+> line", "FK dominates O0 by 10-80x above 200'", "up to ~7x C_l", the per-panel
+> max|FK/(O0+FF)| = 46/78/47/5, and the Figure-12 "modulus pair" story) are
+> **RETRACTED**. Full audit: `prototype/bmode_audit/REPORT.md` (master) and
+> `prototype/bmode_audit/A1/REPORT.md`. Three independent defects, each established
+> in the paper's own 2026-08 audit (`SFT-lensing-paper-analyses/sachs_sft/analyses/
+> mc_fk_complete/NOTES.md` sections 3.1-3.3; `docs/fk_audit_2026-08/SUMMARY.md`):
+>
+> 1. **Wrong vertex.** The run bound the June `equal_time_limber` kappa3 callable
+>    (ell_max = 1000, cosine grid frozen at the (1,1,1) corner). Its fold is 4.5x
+>    low at 0.5' and FLAT to ~600', where the manuscript's ell_max = 15360,
+>    permutation-aware vertex decays by three orders of magnitude and changes sign
+>    near 3 degrees. "FK dominates O0 above 200'" is that frozen corner read against
+>    a decaying Order-0; with the corrected table |FK/O0| is 0.02 at 5 deg and 0.1
+>    at 10 deg, and FK is declared unconverged there anyway.
+> 2. **Incomplete estimator.** `simulate_fk_vr` deforms only the observable leg and
+>    captures a share T1/(T1+T2) = 0.25 (0.5'), 0.17 (2'), 0.03 (8') of the FK
+>    diagram, negative beyond ~12' (-0.16 at 30').
+> 3. **Mis-calibrated deformation.** Q was solved against the nominal node
+>    covariance V = Sigma2/(2 sigma); the "Levy-peaked Q" of finding 1 is this
+>    mis-calibration hitting non-PSD nodes of the Sigma2 table (x3.9 inflation at
+>    sigma_lambda = 8, n_lambda = 1000; grid-unstable; this run used n_lambda = 600).
+>    The correct calibration is solve_Q(B[k], zeta[k]).
+>
+> The near-agreement with the June fold at ~1' was the product of (2) and (3).
+>
+> **Spin structure.** The claim "FK feeds EE+BB and cancels in EE-BB, i.e.
+> Delta C_EE^FK = Delta C_BB^FK" is wrong. The FK diagram is
+> 2 Re <gamma^(2)(n1) gamma^(1)*(n2)>; the linear response gamma^(1) is pure E
+> realisation by realisation, so **C_BB^FK = 0 identically** and xi_-^FK is fixed by
+> xi_+^FK through the d^l_{2,-2} kernel (its gamma^4 small-angle law is that kernel,
+> not a suppression). The MC's xi_- ~ 0 was the frozen-corner coincident-leg identity
+> (the cut1000 fold has xi_- = 0 to 1e-16), and a flat xi_+ has a vanishing pure-E
+> xi_- anyway, so the run could not distinguish B = E from B = 0. The first non-zero
+> shear B-mode is fourth order (Gaussian FF + connected K4). "kappa E
+> parity-forbidden" is also wrong (kappa-B and EB are; kappa-E is the standard
+> cross-spectrum).
+>
+> **What survives:** the sachsray Jacobi robustness and Gaussian bridge gates
+> (`stability_test.py`, `route.py`), the verbatim curved-sky transform in
+> `figure12.py`, and the Order-0 convention gate. The FF channel here is also
+> ~0.5x the paper's fold at 1' with an unphysical constant xi_- floor (outdated).
+
 # FK (non-Gaussian) Monte-Carlo → C_ℓ contribution
 
 Brings the paper's **FK (three-point / non-Gaussian)** channel into the sachsray
