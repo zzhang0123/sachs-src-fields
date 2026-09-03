@@ -1,0 +1,12 @@
+convention check: {'sign_spin2': -1, 'err_plus': 15.84033018445757, 'err_minus': 2.639222174138922e-11, 'lap_err': 1.998934351377102e-11}
+[gauss] {'phi00_rms': 0.09223108201938403, 'w_rms': 0.04131896572394472, 'phi00_skew': 0.010640790898882105, 'kappa_born_rms': 0.029999999999999995}
+[gauss] eps=+1.00 traced 49152 rays in 47.9 s; kappa rms 3.003e-02 omega rms 2.42e-04
+[gauss] eps=-1.00 traced 49152 rays in 50.9 s; kappa rms 2.999e-02 omega rms 2.41e-04
+[gauss] eps=+0.50 traced 49152 rays in 41.1 s; kappa rms 1.501e-02 omega rms 6.04e-05
+[gauss] eps=-0.50 traced 49152 rays in 40.8 s; kappa rms 1.500e-02 omega rms 6.03e-05
+[ng] {'phi00_rms': 0.09828115688563074, 'w_rms': 0.0497860203922002, 'phi00_skew': -0.8181629996059845, 'kappa_born_rms': 0.03046856089395034}
+[ng] eps=+1.00 traced 49152 rays in 45.9 s; kappa rms 3.045e-02 omega rms 2.53e-04
+[ng] eps=-1.00 traced 49152 rays in 42.2 s; kappa rms 3.051e-02 omega rms 2.53e-04
+[ng] eps=+0.50 traced 49152 rays in 38.9 s; kappa rms 1.523e-02 omega rms 6.32e-05
+[ng] eps=-0.50 traced 49152 rays in 35.7 s; kappa rms 1.524e-02 omega rms 6.32e-05
+done nside64_seed3 in 350 s

@@ -1,0 +1,4 @@
+/Users/zzhang/projects/SFT/src-field/prototype/bmode_audit/e1_takahashi/e1_takahashi_bmode.py:231: RuntimeWarning: invalid value encountered in sqrt
+  fac = np.sqrt((l_of + 2.0) * (l_of - 1.0) / np.where(l_of > 1, l_of * (l_of + 1.0), 1.0))
+[08:56:46] floor synthesis at nside 4096 lmax 8192: 11s
+[08:56:57] saved /Users/zzhang/projects/SFT/src-field/prototype/bmode_audit/e1_takahashi/outputs/floor_zs16_nside1024_lmax2048.npz

@@ -1,0 +1,2 @@
+# raw per-seed solver outputs (6-25 MB each); the json/md/png summaries are tracked
+*.npz

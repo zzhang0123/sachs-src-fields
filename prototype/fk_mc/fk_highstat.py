@@ -1,4 +1,8 @@
-"""Re-run ONLY the FK (VR) channel at high statistics, to resolve the small
+"""SUPERSEDED (2026-09-03): the FK numbers produced here are RETRACTED (June cut1000
+vertex, single-leg simulate_fk_vr, nominal-Q calibration; and C_BB^FK = 0 identically,
+not "B = E"). See prototype/fk_mc/README.md and prototype/bmode_audit/REPORT.md.
+
+Re-run ONLY the FK (VR) channel at high statistics, to resolve the small
 shear-difference channels xi_- = xi_11 - xi_22 (= zeta_TPP, gamma^4-suppressed)
 and xi_{kappa gamma_t} = -xi_01 (parity-forbidden), where the paper predicts the
 FK contribution to be ~0. O0 (analytic, exact) and FF are kept from the existing

@@ -28,7 +28,7 @@ from .solvers import (
     solve_riccati,
 )
 from .raytrace import DrivingField, background_distance, trace_rays, trace_rays_streaming
-from .fields import driving_from_components, driving_from_source
+from .fields import driving_from_components, driving_from_potential_alms, driving_from_source
 
 __all__ = [
     "physics",
@@ -50,4 +50,5 @@ __all__ = [
     "trace_rays_streaming",
     "driving_from_components",
     "driving_from_source",
+    "driving_from_potential_alms",
 ]
